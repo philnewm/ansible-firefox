@@ -23,7 +23,7 @@ permissions:
   contents: read
 
 jobs:
-  ansible-role-template:
+  ansible-firefox:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5

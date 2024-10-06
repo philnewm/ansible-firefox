@@ -1,6 +1,6 @@
 ---
 
-# tasks to install ansible-role-template
+# tasks to install ansible-firefox
 # INFO larger roles should only use **include_tasks** here
 
 
