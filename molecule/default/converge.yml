@@ -1,6 +1,6 @@
 ---
 
-- name: Create and configure ansible-firefox
+- name: Create and configure ansible-nautilus
   hosts: client
 
   # TODO local testing only
@@ -10,5 +10,6 @@
     - role: ansible-firefox
       tasks_from: main
       firefox_state: present
+      enable_plugins: true
 
 ...

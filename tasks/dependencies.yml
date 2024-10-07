@@ -3,8 +3,42 @@
 # Runs all dependencies
 
 
-# INFO This task may be osbolete for your use-case
-- name: Gather package facts
-  ansible.builtin.package_facts:
+- name: Install dependencies
+  become: true
+  loop: "{{ dependencies[ansible_os_family] }}"
+  when: item not in ansible_facts.packages
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: present
+
+- name: Add Firefox repository using key from URL
+  become: true
+  when: ansible_distribution == "Debian"
+  ansible.builtin.deb822_repository:
+    name: mozilla
+    types: [deb]
+    uris: "https://packages.mozilla.org/apt"
+    suites: [mozilla]
+    components: [main]
+    signed_by: https://packages.mozilla.org/apt/repo-signing-key.gpg
+    state: present
+    enabled: true
+
+- name: Install EPEL repository
+  become: true
+  when: ansible_os_family == "RedHat"
+  ansible.builtin.yum_repository:
+    name: epel
+    description: "Extra Packages for Enterprise Linux 9 - $basearch"
+    baseurl: "https://download.fedoraproject.org/pub/epel/9/Everything/$basearch"
+    enabled: yes
+    gpgcheck: yes
+    gpgkey: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9"
+    state: present
+
+- name: Update package cache
+  become: true
+  ansible.builtin.package:
+    update_cache: true
 
 ...

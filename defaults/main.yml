@@ -3,4 +3,10 @@
 # Variables for ansible-firefox
 
 
+firefox_package:
+  "RedHat": firefox
+  "Debian": firefox
+
+source_firefox: distro_native
+
 ...

@@ -3,7 +3,15 @@
 # vars file for ansible-role-template
 
 
-# remove this placeholder
-ansible_role_template: "Default role name still in use."
+dependencies:
+  "RedHat": 
+    - python3-psutil
+  "Debian":
+    - python3-debian
+    - dirmngr
+    - ca-certificates
+    - software-properties-common
+    - apt-transport-https
+    - wget
 
 ...
