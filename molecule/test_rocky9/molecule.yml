@@ -1,10 +1,9 @@
 ---
+
 dependency:
   name: galaxy
 driver:
   name: vagrant
-  parallel: true
-  snapshot: initial
   provider:
     name: virtualbox
     type: virtualbox
@@ -15,27 +14,25 @@ lint: |
 platforms:
   - name: Rocky9
     box: philnewm/rocky9.4-gnome
-    box_version: "0.1.0"
+    box_version: "0.1.1"
     memory: 4096
     cpus: 2
     interfaces:
       - auto_config: true
         network_name: private_network
         type: "static"
-        ip: "192.168.56.30"
+        ip: "192.168.56.10"
     provider_raw_config_args:
       - "customize ['modifyvm', :id, '--uartmode1', 'disconnected']"
       - "customize ['modifyvm', :id, '--graphicscontroller', 'vmsvga']"
       - "customize ['modifyvm', :id, '--vram', '256']"
       - "customize ['modifyvm', :id, '--accelerate-3d', 'off']"
       - "customize ['modifyvm', :id, '--accelerate-2d-video', 'on']"
-      - "customize ['modifyvm', :id, '--clipboard-mode', 'bidirectional']"
     groups:
       - client
 provisioner:
   name: ansible
   env:
-    # ANSIBLE_VERBOSITY: 3
     ANSIBLE_DIFF_ALWAYS: false
   playbooks:
     create: ../default/create.yml
@@ -71,3 +68,5 @@ scenario:
       - verify
       - cleanup
       - destroy
+
+...

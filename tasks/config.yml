@@ -1,0 +1,110 @@
+---
+
+# tasks file for firefox_config
+
+
+# TODO make idempotent
+- name: Create firefox profile
+  ansible.builtin.command: 
+    cmd: "firefox -headless -CreateProfile {{ profile_name }}"
+  register: result
+  changed_when: result.rc == 0
+
+- name: Find profile directory
+  ansible.builtin.find:
+    paths: "{{ firefox_config_path[ansible_distribution] }}"
+    patterns: '*.{{ profile_name }}'
+    file_type: directory
+  register: profile_dir
+
+- name: Parse result for profile path
+  set_fact:
+    profile_path: "{{ profile_dir.files[0].path }}"
+
+- name: Show profile path
+  ansible.builtin.debug:
+    var: profile_path
+
+- name: Copy user.js to host
+  ansible.builtin.copy:
+    src: "{{ user_config_file }}"
+    dest: "{{ profile_path }}/{{ user_config_file }}"
+    mode: preserve
+
+- name: Set general options in profiles.ini
+  loop: "{{ profile_options | dict2items }}"
+  community.general.ini_file:
+    path: '{{ firefox_config_path[ansible_distribution] }}/profiles.ini'
+    section: General
+    option: '{{ item.key }}'
+    value: '{{ item.value }}'
+    mode: 0644
+    create: yes
+    no_extra_spaces: yes
+
+- name: Set ansible profile name
+  loop: "{{ profile_config | dict2items }}"
+  community.general.ini_file:
+    path: "{{ firefox_config_path[ansible_distribution] }}/profiles.ini"
+    section: Profile0
+    option: "{{ item.key }}"
+    value:  "{{ item.value }}"
+    mode: "0644"
+    create: yes
+    no_extra_spaces: yes
+
+- name: Call Firefox Addons API for theme info
+  uri:
+    url: https://addons.mozilla.org/api/v5/addons/addon/{{ theme_name }}
+    return_content: yes
+  register: api_call
+
+- name: Parse result for download link
+  ansible.builtin.set_fact:
+    theme_download_link: "{{ api_call.json.current_version.file.url }}"
+
+- name: Parse result for guid
+  ansible.builtin.set_fact:
+    theme_guid: "{{ api_call.json.guid }}"
+
+- name: Ensure extensions directory exists
+  ansible.builtin.file:
+    path: "{{ profile_path }}/extensions/{{ theme_guid }}"
+    state: directory
+    mode: 0755
+
+- name: Download theme extension file
+  get_url:
+    url: "{{ theme_download_link }}"
+    dest: "{{ ansible_env.HOME }}"
+    mode: 0644
+
+- name: Extract theme
+  ansible.builtin.unarchive:
+    src: "{{ ansible_env.HOME }}/{{ theme_download_link | basename }}"
+    dest: "{{ profile_path }}/extensions/{{ theme_guid }}"
+    remote_src: true
+
+# - name: Populate default profile
+#   ansible.builtin.command: firefox -headless -P default_profile_by_ansible
+#   async: 1
+#   poll: 1
+#   ignore_errors: true
+
+# - name: Create directory if they don't exist
+#   ansible.builtin.file:
+#     path: "/{{ policies_path }}"
+#     state: directory
+#     owner: root
+#     group: root
+#     mode: "0775"
+#   become: true
+
+# - name: copy policies.json to host
+#   ansible.builtin.copy:
+#     src: "{{ policies_file }}"
+#     dest: "/{{ (policies_path, policies_file) | ansible.builtin.path_join }}"
+#     mode: preserve
+#   become: true
+
+...

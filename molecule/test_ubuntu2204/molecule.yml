@@ -1,10 +1,9 @@
 ---
+
 dependency:
   name: galaxy
 driver:
   name: vagrant
-  parallel: true
-  snapshot: initial
   provider:
     name: virtualbox
     type: virtualbox
@@ -15,14 +14,14 @@ lint: |
 platforms:
   - name: Ubuntu2204
     box: philnewm/ubuntu2204-gnome
-    box_version: "0.1.0"
+    box_version: "0.1.12"
     memory: 4096
     cpus: 2
     interfaces:
       - auto_config: true
         network_name: private_network
         type: "static"
-        ip: "192.168.56.40"
+        ip: "192.168.56.10"
     provider_raw_config_args:
       - "customize ['modifyvm', :id, '--uartmode1', 'disconnected']"
       - "customize ['modifyvm', :id, '--graphicscontroller', 'vmsvga']"
@@ -35,7 +34,6 @@ platforms:
 provisioner:
   name: ansible
   env:
-    # ANSIBLE_VERBOSITY: 3
     ANSIBLE_DIFF_ALWAYS: false
   playbooks:
     create: ../default/create.yml
@@ -71,3 +69,5 @@ scenario:
       - verify
       - cleanup
       - destroy
+
+...

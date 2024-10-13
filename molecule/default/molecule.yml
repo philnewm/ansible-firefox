@@ -1,9 +1,9 @@
 ---
+
 dependency:
   name: galaxy
 driver:
   name: vagrant
-  parallel: true
   provider:
     name: virtualbox
     type: virtualbox
@@ -14,9 +14,11 @@ lint: |
 platforms:
   - name: Alma9
     box: philnewm/alma9.4-gnome
-    box_version: "0.1.0"
+    box_version: "0.1.11"
     memory: 4096
     cpus: 2
+    provider_options:
+      gui: true
     interfaces:
       - auto_config: true
         network_name: private_network
@@ -28,17 +30,18 @@ platforms:
       - "customize ['modifyvm', :id, '--vram', '256']"
       - "customize ['modifyvm', :id, '--accelerate-3d', 'off']"
       - "customize ['modifyvm', :id, '--accelerate-2d-video', 'on']"
-      - "customize ['modifyvm', :id, '--defaultfrontend', 'gui']"
       - "customize ['modifyvm', :id, '--clipboard-mode', 'bidirectional']"
       - "customize ['modifyvm', :id, '--draganddrop', 'bidirectional']"
       - "customize ['storagectl', :id, '--name', 'SATA Controller', '--hostiocache', 'on']"
     groups:
       - client
-  - name: Debian12
-    box: philnewm/debian12-gnome  # philnewm/ubuntu2204-gnome
-    version: 0.1.0
+  - name: Ubuntu2204
+    box: philnewm/ubuntu2204-gnome
+    version: "0.1.12"
     memory: 4096
     cpus: 2
+    provider_options:
+      gui: true
     interfaces:
       - auto_config: true
         network_name: private_network
@@ -50,7 +53,6 @@ platforms:
       - "customize ['modifyvm', :id, '--vram', '256']"
       - "customize ['modifyvm', :id, '--accelerate-3d', 'off']"
       - "customize ['modifyvm', :id, '--accelerate-2d-video', 'on']"
-      - "customize ['modifyvm', :id, '--defaultfrontend', 'gui']"
       - "customize ['modifyvm', :id, '--clipboard-mode', 'bidirectional']"
       - "customize ['modifyvm', :id, '--draganddrop', 'bidirectional']"
       - "customize ['storagectl', :id, '--name', 'SATA Controller', '--hostiocache', 'on']"
@@ -59,7 +61,6 @@ platforms:
 provisioner:
   name: ansible
   env:
-    # ANSIBLE_VERBOSITY: 3
     ANSIBLE_DIFF_ALWAYS: false
   playbooks:
     create: ../default/create.yml
@@ -74,7 +75,6 @@ provisioner:
         ansible_python_interpreter: /usr/bin/python3
   config_options:
     defaults:
-      remote_tmp: /tmp/.ansible-vagrant
       diff: True
       gathering: smart
       fact_caching_timeout: 3600
@@ -83,7 +83,6 @@ provisioner:
       stdout_callback: debug
       callbacks_enabled: ansible.posix.profile_tasks
     connection:
-      # WARNING disable "requiretty" in hosts sudoers file on case of errors
       pipelining: true
     env:
       ANSIBLE_FORCE_COLOR: "true"
@@ -101,3 +100,5 @@ scenario:
       - verify
       - cleanup
       - destroy
+
+...

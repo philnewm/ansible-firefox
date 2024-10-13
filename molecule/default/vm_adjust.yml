@@ -1,0 +1,22 @@
+---
+
+- name: Get VM IDs
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      VBoxManage list runningvms | sed 's/"//g' | awk '{print $1}'
+  args:
+    executable: /bin/bash
+  register: runningvms
+  changed_when: false
+  delegate_to: localhost
+
+- name: Set default resolution
+  loop: "{{ runningvms.stdout_lines }}"
+  ansible.builtin.command:
+    cmd: "VBoxManage controlvm {{ item }} setvideomodehint 1920 1080 32"
+  register: result
+  changed_when: not result.rc
+  delegate_to: localhost
+
+...

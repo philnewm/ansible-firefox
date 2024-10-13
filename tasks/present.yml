@@ -24,4 +24,8 @@
     name: "{{ firefox_package[ansible_os_family] }}"
     state: present
 
+- name: Configure firefox
+  ansible.builtin.include_tasks:
+    file: config.yml
+
 ...
