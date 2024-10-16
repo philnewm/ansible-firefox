@@ -3,6 +3,8 @@
 https://gist.github.com/aaronlippold/d1183270274568159d6a7b098441ec4c
 https://braheezy.github.io/posts/automating-firefox-with-ansible/
 https://askubuntu.com/questions/73474/how-to-install-firefox-addon-from-command-line-in-scripts
+https://wiki.mozilla.org/Firefox/CommandLineOptions#Using_command_line_options
+https://linuxconfig.org/how-to-customize-firefox-using-the-policies-json-file
 
 [![ci-testing](https://github.com/philnewm/ansible-firefox/actions/workflows/molecule-ci.yml/badge.svg)](https://github.com/philnewm/ansible-firefox/actions/workflows/molecule-ci.yml)
 

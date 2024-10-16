@@ -10,6 +10,12 @@
   register: result
   changed_when: result.rc == 0
 
+- name: Populate default profile
+  ansible.builtin.command: firefox -headless -P default_profile_by_ansible
+  async: 1
+  poll: 1
+  ignore_errors: true
+
 - name: Find profile directory
   ansible.builtin.find:
     paths: "{{ firefox_config_path[ansible_distribution] }}"
@@ -53,58 +59,28 @@
     create: yes
     no_extra_spaces: yes
 
-- name: Call Firefox Addons API for theme info
-  uri:
-    url: https://addons.mozilla.org/api/v5/addons/addon/{{ theme_name }}
-    return_content: yes
-  register: api_call
+# TODO loop over extensions
+- name: Get extensions
+  loop: "{{ extensions }}"
+  loop_control:
+    loop_var: extension
+  ansible.builtin.include_tasks:
+    file: extensions.yml
 
-- name: Parse result for download link
-  ansible.builtin.set_fact:
-    theme_download_link: "{{ api_call.json.current_version.file.url }}"
-
-- name: Parse result for guid
-  ansible.builtin.set_fact:
-    theme_guid: "{{ api_call.json.guid }}"
-
-- name: Ensure extensions directory exists
+- name: Create directory if they don't exist
   ansible.builtin.file:
-    path: "{{ profile_path }}/extensions/{{ theme_guid }}"
+    path: "/{{ policies_path }}"
     state: directory
-    mode: 0755
+    owner: root
+    group: root
+    mode: "0775"
+  become: true
 
-- name: Download theme extension file
-  get_url:
-    url: "{{ theme_download_link }}"
-    dest: "{{ ansible_env.HOME }}"
-    mode: 0644
-
-- name: Extract theme
-  ansible.builtin.unarchive:
-    src: "{{ ansible_env.HOME }}/{{ theme_download_link | basename }}"
-    dest: "{{ profile_path }}/extensions/{{ theme_guid }}"
-    remote_src: true
-
-# - name: Populate default profile
-#   ansible.builtin.command: firefox -headless -P default_profile_by_ansible
-#   async: 1
-#   poll: 1
-#   ignore_errors: true
-
-# - name: Create directory if they don't exist
-#   ansible.builtin.file:
-#     path: "/{{ policies_path }}"
-#     state: directory
-#     owner: root
-#     group: root
-#     mode: "0775"
-#   become: true
-
-# - name: copy policies.json to host
-#   ansible.builtin.copy:
-#     src: "{{ policies_file }}"
-#     dest: "/{{ (policies_path, policies_file) | ansible.builtin.path_join }}"
-#     mode: preserve
-#   become: true
+- name: copy policies.json to host
+  ansible.builtin.copy:
+    src: "{{ policies_file }}"
+    dest: "/{{ policies_path }}/{{ policies_file }}"
+    mode: preserve
+  become: true
 
 ...
