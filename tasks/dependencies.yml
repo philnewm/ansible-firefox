@@ -35,8 +35,10 @@
     gpgcheck: yes
     gpgkey: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-9"
     state: present
+  register: epel_result
 
 - name: Update package cache
+  when: epel_result.changed
   become: true
   ansible.builtin.package:
     update_cache: true

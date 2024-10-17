@@ -3,19 +3,6 @@
 # tasks file for firefox_config
 
 
-# TODO make idempotent
-- name: Create firefox profile
-  ansible.builtin.command: 
-    cmd: "firefox -headless -CreateProfile {{ profile_name }}"
-  register: result
-  changed_when: result.rc == 0
-
-- name: Populate default profile
-  ansible.builtin.command: firefox -headless -P default_profile_by_ansible
-  async: 1
-  poll: 1
-  ignore_errors: true
-
 - name: Find profile directory
   ansible.builtin.find:
     paths: "{{ firefox_config_path[ansible_distribution] }}"
@@ -27,9 +14,31 @@
   set_fact:
     profile_path: "{{ profile_dir.files[0].path }}"
 
-- name: Show profile path
-  ansible.builtin.debug:
-    var: profile_path
+- name: Create new profile
+  when: not profile_path
+  block:
+    - name: Create firefox profile
+      ansible.builtin.command: 
+        cmd: "firefox -headless -CreateProfile {{ profile_name }}"
+      register: result
+      changed_when: result.rc == 0
+
+    - name: Populate default profile
+      ansible.builtin.command: firefox -headless -P default_profile_by_ansible
+      async: 1
+      poll: 1
+      ignore_errors: true
+
+    - name: Find profile directory
+      ansible.builtin.find:
+        paths: "{{ firefox_config_path[ansible_distribution] }}"
+        patterns: '*.{{ profile_name }}'
+        file_type: directory
+      register: profile_dir
+
+    - name: Parse result for profile path
+      set_fact:
+        profile_path: "{{ profile_dir.files[0].path }}"
 
 - name: Copy user.js to host
   ansible.builtin.copy:
@@ -59,7 +68,6 @@
     create: yes
     no_extra_spaces: yes
 
-# TODO loop over extensions
 - name: Get extensions
   loop: "{{ extensions }}"
   loop_control:
@@ -76,7 +84,7 @@
     mode: "0775"
   become: true
 
-- name: copy policies.json to host
+- name: Copy policies.json to host - enables extensions
   ansible.builtin.copy:
     src: "{{ policies_file }}"
     dest: "/{{ policies_path }}/{{ policies_file }}"

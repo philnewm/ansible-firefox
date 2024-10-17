@@ -32,12 +32,15 @@ profile_config:
   "Default": 1
 
 extensions:
+  - matte-black-violet
   - duckduckgo
   - darkreader
-  - matte-black-violet
   - bitwarden-password-manager
-  - languagetool
   - ublock-origin
+  - languagetool
+  - enhancer-for-youtube
   - behind_the_overlay
+  - dictionary-anyvhere
+  - gnome-shell-integration
 
 ...
