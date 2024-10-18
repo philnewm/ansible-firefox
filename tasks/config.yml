@@ -11,12 +11,12 @@
   register: profile_dir
 
 - name: Parse result for existing profile path
-  when: profile_dir.files
+  when: profile_dir.matched
   set_fact:
     profile_path: "{{ profile_dir.files[0].path }}"
 
 - name: Create new profile
-  when: not profile_dir.files
+  when: not profile_dir.matched
   block:
     - name: Create firefox profile
       ansible.builtin.command: 
@@ -35,11 +35,11 @@
         paths: "{{ firefox_config_path[ansible_distribution] }}"
         patterns: '*.{{ profile_name }}'
         file_type: directory
-      register: profile_dir
+      register: created_profile_dir
 
     - name: Parse result for profile path
       set_fact:
-        profile_path: "{{ profile_dir.files[0].path }}"
+        profile_path: "{{ created_profile_dir.files[0].path }}"
 
 - name: Template user.js to host
   ansible.builtin.template:
@@ -89,7 +89,7 @@
 
 - name: Template policies.json to host - enables extensions
   become: true
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: "policies.json.j2"
     dest: "/{{ policies_path }}/policies.json"
     owner: "{{ ansible_env.USER }}"
