@@ -10,12 +10,13 @@
     file_type: directory
   register: profile_dir
 
-- name: Parse result for profile path
+- name: Parse result for existing profile path
+  when: profile_dir.files
   set_fact:
     profile_path: "{{ profile_dir.files[0].path }}"
 
 - name: Create new profile
-  when: not profile_path
+  when: not profile_dir.files
   block:
     - name: Create firefox profile
       ansible.builtin.command: 
@@ -40,11 +41,13 @@
       set_fact:
         profile_path: "{{ profile_dir.files[0].path }}"
 
-- name: Copy user.js to host
-  ansible.builtin.copy:
-    src: "{{ user_config_file }}"
-    dest: "{{ profile_path }}/{{ user_config_file }}"
-    mode: preserve
+- name: Template user.js to host
+  ansible.builtin.template:
+    src: "user.js.j2"
+    dest: "{{ profile_path }}/user.js"
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_effective_group_id }}"
+    mode: "0644"
 
 - name: Set general options in profiles.ini
   loop: "{{ profile_options | dict2items }}"
@@ -76,19 +79,21 @@
     file: extensions.yml
 
 - name: Create directory if they don't exist
+  become: true
   ansible.builtin.file:
     path: "/{{ policies_path }}"
     state: directory
     owner: root
     group: root
     mode: "0775"
-  become: true
 
-- name: Copy policies.json to host - enables extensions
-  ansible.builtin.copy:
-    src: "{{ policies_file }}"
-    dest: "/{{ policies_path }}/{{ policies_file }}"
-    mode: preserve
+- name: Template policies.json to host - enables extensions
   become: true
+  ansible.builtin.copy:
+    src: "policies.json.j2"
+    dest: "/{{ policies_path }}/policies.json"
+    owner: "{{ ansible_env.USER }}"
+    group: "{{ ansible_effective_group_id }}"
+    mode: "0644"
 
 ...

@@ -1,0 +1,11 @@
+{
+    "policies":{
+        "Extensions":{
+            "Install":[
+                {% for extension in extensions %}
+                "https://addons.mozilla.org/firefox/downloads/latest/{{ extension }}/latest.xpi"{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ]
+        }
+    }
+}

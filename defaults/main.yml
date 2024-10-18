@@ -12,9 +12,7 @@ source_firefox: distro_native
 profile_name: default_profile_by_ansible
 config_server_path: "/mnt/library/config/"
 policies_path: "etc/firefox/policies"
-policies_file: "policies.json"
 
-user_config_file: "user.js"
 firefox_config_path:
   "AlmaLinux": "{{ ansible_env.HOME }}/.mozilla/firefox"
   "Rocky": "{{ ansible_env.HOME }}/.mozilla/firefox"
@@ -30,6 +28,21 @@ profile_config:
   "Name": "{{ profile_path | basename | split('.') | last }}"
   "Path": "{{ profile_path | basename }}"
   "Default": 1
+
+user_config:
+  "general.autoScroll": true
+  "layout.css.prefers-color-scheme.content-override": 0
+  "browser.startup.homepage": "https://duckduckgo.com/"
+  "browser.newtabpage.activity-stream.showSponsoredTopSites": false
+  "privacy.history.custom": true
+  "places.history.enabled": false
+  "browser.formfill.enable": false
+  "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"history\",\"formdata\",\"downloads\",\"sessions\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
+  "privacy.sanitize.sanitizeOnShutdown": true
+  "signon.rememberSignons": false
+  "privacy.clearOnShutdown.offlineApps": true
+  "browser.backspace_action": 0
+
 
 extensions:
   - matte-black-violet
