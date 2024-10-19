@@ -1,0 +1,67 @@
+---
+
+# tasks to set up a firefox default profile
+
+
+- name: Find profile directory
+  ansible.builtin.find:
+    paths: "{{ firefox_config_path[firefox_source][ansible_distribution] }}"
+    patterns: '*.{{ profile_name }}'
+    file_type: directory
+  register: profile_dir
+
+- name: Create new profile
+  when: not profile_dir.matched
+  block:
+    - name: Create firefox profile
+      ansible.builtin.command: 
+        cmd: "{{ firefox_command[firefox_source] }} -headless -CreateProfile '{{ profile_name }}' --screenshot /dev/null"
+      register: result
+      changed_when: result.rc == 0
+
+    - name: Populate default profile
+      ansible.builtin.command: 
+        cmd: "{{ firefox_command[firefox_source] }} -headless -P {{ profile_name }} --screenshot /dev/null"
+      register: result
+      changed_when: result.rc == 0
+
+    - name: Find profile directory
+      ansible.builtin.find:
+        paths: "{{ firefox_config_path[firefox_source][ansible_distribution] }}"
+        patterns: '*.{{ profile_name }}'
+        file_type: directory
+      register: new_profile_dir
+
+    # INFO necessary since ansible write debug information even to skipped task variables (causes overwrite in this case)
+    - name: Set profile_dir to new_profile_dir if profile was created
+      when: result.rc == 0
+      ansible.builtin.set_fact:
+        profile_dir: "{{ new_profile_dir }}"
+
+- name: Parse result for profile path
+  set_fact:
+    profile_path: "{{ profile_dir.files[0].path }}"
+
+- name: Set general options in profiles.ini
+  loop: "{{ profile_options | dict2items }}"
+  community.general.ini_file:
+    path: '{{ firefox_config_path[firefox_source][ansible_distribution] }}/profiles.ini'
+    section: General
+    option: '{{ item.key }}'
+    value: '{{ item.value }}'
+    mode: 0644
+    create: yes
+    no_extra_spaces: yes
+
+- name: Set ansible profile name
+  loop: "{{ profile_config | dict2items }}"
+  community.general.ini_file:
+    path: "{{ firefox_config_path[firefox_source][ansible_distribution] }}/profiles.ini"
+    section: Profile0
+    option: "{{ item.key }}"
+    value:  "{{ item.value }}"
+    mode: "0644"
+    create: yes
+    no_extra_spaces: yes
+
+...

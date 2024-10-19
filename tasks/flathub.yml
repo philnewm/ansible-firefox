@@ -1,0 +1,26 @@
+---
+
+# Install firefox flatpak from flathub
+
+
+- name: Install flatpak for RedHat and Debian-based systems
+  become: true
+  ansible.builtin.package:
+    name: flatpak
+    state: present
+
+- name: Add Flathub as a flatpak remote
+  become: true
+  community.general.flatpak_remote:
+    name: flathub
+    flatpakrepo_url: https://flathub.org/repo/flathub.flatpakrepo
+    state: present
+
+- name: Install Firefox from Flathub
+  become: true
+  community.general.flatpak:
+    name: org.mozilla.firefox
+    state: present
+    remote: flathub
+
+...

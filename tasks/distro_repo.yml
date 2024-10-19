@@ -1,7 +1,6 @@
 ---
 
-# Runs all dependencies
-
+# Install firefox from distro repo
 
 - name: Install dependencies
   become: true
@@ -42,5 +41,11 @@
   become: true
   ansible.builtin.package:
     update_cache: true
+
+- name: Install firefox from distro repo
+  become: true
+  ansible.builtin.package:
+    name: "{{ firefox_package[ansible_os_family] }}"
+    state: present
 
 ...

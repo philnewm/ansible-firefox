@@ -7,18 +7,39 @@ firefox_package:
   "RedHat": firefox
   "Debian": firefox
 
-source_firefox: distro_native
+firefox_launcher:
+  "distro_repo":
+    "RedHat": "firefox.desktop"
+    "Debian": "firefox_firefox.desktop"
+  "flathub":
+    "RedHat": org.mozilla.firefox.desktop
+    "Debian": org.mozilla.firefox.desktop
+
+firefox_command:
+  "distro_repo": "firefox"
+  "flathub": "flatpak run org.mozilla.firefox"
+
+firefox_source: distro_repo
+firefox_extensions: true
+gnome_favorite: true
 
 profile_name: default_profile_by_ansible
 config_server_path: "/mnt/library/config/"
 policies_path: "etc/firefox/policies"
 
 firefox_config_path:
-  "AlmaLinux": "{{ ansible_env.HOME }}/.mozilla/firefox"
-  "Rocky": "{{ ansible_env.HOME }}/.mozilla/firefox"
-  "CentOSStream": "{{ ansible_env.HOME }}/.mozilla/firefox"
-  "Ubuntu": "{{ ansible_env.HOME }}/snap/firefox/common/.mozilla/firefox"
-  "Debian": "{{ ansible_env.HOME }}/.mozilla/firefox"
+  "distro_repo":
+    "AlmaLinux": "{{ ansible_env.HOME }}/.mozilla/firefox"
+    "Rocky": "{{ ansible_env.HOME }}/.mozilla/firefox"
+    "CentOSStream": "{{ ansible_env.HOME }}/.mozilla/firefox"
+    "Ubuntu": "{{ ansible_env.HOME }}/snap/firefox/common/.mozilla/firefox"
+    "Debian": "{{ ansible_env.HOME }}/.mozilla/firefox"
+  "flathub":
+    "AlmaLinux": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
+    "Rocky": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
+    "CentOSStream": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
+    "Ubuntu": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
+    "Debian": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
 
 profile_options:
   "StartWithLastProfile": 1
@@ -42,10 +63,9 @@ user_config:
   "signon.rememberSignons": false
   "privacy.clearOnShutdown.offlineApps": true
   "browser.backspace_action": 0
-
+  "extensions.activeThemeID": "{ad213ecb-ae95-4ac8-ac7a-5925ba36ea1d}"
 
 extensions:
-  - matte-black-violet
   - duckduckgo
   - darkreader
   - bitwarden-password-manager
@@ -55,5 +75,6 @@ extensions:
   - behind_the_overlay
   - dictionary-anyvhere
   - gnome-shell-integration
+  - matte-black-violet
 
 ...

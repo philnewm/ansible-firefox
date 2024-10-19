@@ -21,7 +21,7 @@
     mode: 0755
 
 - name: Download theme extension file
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ theme_download_link }}"
     dest: "{{ profile_path }}/extensions/{{ theme_guid }}.xpi"
     mode: 0644
