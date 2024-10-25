@@ -7,53 +7,87 @@
     - name: Gather package facts
       ansible.builtin.package_facts:
 
-    - name: Get Gnome version
-      ansible.builtin.shell:
-        cmd: |
-          set -o pipefail
-          gnome-shell --version | awk '{print $3}' | cut -d'.' -f1
-        executable: /bin/bash
-      register: gnome_major_version
-      changed_when: false
-
     - name: Initialize role library
       ansible.builtin.include_role:
-        name: ansible-nautilus
+        name: ansible-firefox
         tasks_from: init
+
+    - name: Test installed dependencies
+      loop: "{{ dependencies[ansible_os_family] }}"
+      ansible.builtin.assert:
+        that:
+          - item in ansible_facts.packages
+        fail_msg: "Dependency '{{ item }}' is not installed"
+        quiet: true
 
     - name: Test installed package
       ansible.builtin.assert:
         that:
-          - nautilus_package[ansible_os_family] in ansible_facts.packages
-        fail_msg: "Package '{{ nautilus_package[ansible_os_family] }}' is not installed"
+          - firefox_package[ansible_os_family] in ansible_facts.packages
+        fail_msg: "Package '{{ firefox_package[ansible_os_family] }}' is not installed"
         quiet: true
 
-    - name: Get nautilus settings
-      loop: "{{ nautilus_settings[gnome_major_version.stdout].keys() }}"
-      community.general.dconf:
-        key: "{{ item }}"
-        state: read
-      register: dconf_list
+    - name: Find profile directory
+      ansible.builtin.find:
+        paths: "{{ firefox_config_path[firefox_source][ansible_distribution] }}"
+        patterns: '*.{{ profile_name }}'
+        file_type: directory
+      register: profile_dir
 
-    - name: Test gnome settings
-      loop: "{{ dconf_list.results }}"
+    - name: Get firefox settings
+      loop: "{{ user_config.keys() }}"
       loop_control:
-        loop_var: entry
-        label: "{{ entry.item }}"
+        loop_var: pref_key
+      ansible.builtin.command:
+        cmd: "grep '^user_pref(\"{{ pref_key }}\",' {{ profile_dir.files[0].path }}/prefs.js"
+      register: prefs_list
+      changed_when: false
+      failed_when: prefs_list.rc != 0
+
+    - name: Create dictionary of fetched preferences
+      loop: "{{ prefs_list.results }}"
+      loop_control:
+        label: "{{ item.pref_key }}"
+      ansible.builtin.set_fact:
+        fetched_prefs: "{{ fetched_prefs | default({}) | combine({ item.pref_key: (item.stdout | regex_search(',\\s*(.+)\\);', '\\1') | first | from_json) }) }}"
+
+    - name: Test firefox settings
+      loop: "{{ fetched_prefs.keys() }}"
+      loop_control:
+        loop_var: key
       ansible.builtin.assert:
         that:
-          - entry.value == nautilus_settings[gnome_major_version.stdout][entry.item]
+          - user_config[key] == fetched_prefs[key]
         fail_msg: |
-          "Expected value '{{ nautilus_settings[gnome_major_version.stdout][entry.item] }}'
-          but got '{{ entry.value }}' instead for key '{{ entry.item }}'."
+          "Expected value '{{ user_config[key] }}'
+          but got '{{ fetched_prefs[key] }}' instead for key '{{ key }}'."
         quiet: true
 
-    - name: Test installed plugins
-      loop: "{{ nautilus_plugins[ansible_os_family] }}"
-      ansible.builtin.assert:
-        that:
-          - item in ansible_facts.packages
-        fail_msg: "Package '{{ item }}' is not installed"
-        quiet: true
+    - name: Load extensions.json content
+      ansible.builtin.slurp:
+        src: "{{ profile_dir.files[0].path }}/extensions.json"
+      register: extensions_file_content
+
+    - name: Install json filter dependency
+      become: true
+      ansible.builtin.package:
+        name: python3-jmespath
+        state: present
+
+    - name: Decode JSON and filter enabled extensions
+      ansible.builtin.set_fact:
+        enabled_extensions: "{{ (extensions_file_content.content | b64decode | from_json) | json_query('addons[?active==`true`].name') }}"
+      when: extensions_file_content is defined
+
+    - name: Display enabled Firefox extensions
+      ansible.builtin.debug:
+        msg: "{{ enabled_extensions }}"
+      when: enabled_extensions is defined
+
+    - name: Install json filter dependency
+      become: true
+      ansible.builtin.package:
+        name: python3-jmespath
+        state: absent
 
 ...

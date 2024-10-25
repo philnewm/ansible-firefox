@@ -58,7 +58,7 @@ user_config:
   "privacy.history.custom": true
   "places.history.enabled": false
   "browser.formfill.enable": false
-  "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"history\",\"formdata\",\"downloads\",\"sessions\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
+  "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"historyFormDataAndDownloads\",\"cookiesAndStorage\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
   "privacy.sanitize.sanitizeOnShutdown": true
   "signon.rememberSignons": false
   "privacy.clearOnShutdown.offlineApps": true

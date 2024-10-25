@@ -30,4 +30,10 @@
     group: "{{ ansible_effective_group_id }}"
     mode: "0644"
 
+- name: Apply Settings to default profile
+  ansible.builtin.command: 
+    cmd: "{{ firefox_command[firefox_source] }} -headless -P {{ profile_name }} --screenshot /dev/null"
+  register: result
+  changed_when: result.rc == 0
+
 ...

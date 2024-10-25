@@ -10,7 +10,7 @@
     - role: ansible-firefox
       tasks_from: main
       firefox_state: present
-      firefox_source: flathub
+      firefox_source: distro_repo
       firefox_extensions: true
       gnome_favorite: true
 
