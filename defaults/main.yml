@@ -5,19 +5,23 @@
 
 firefox_package:
   "RedHat": firefox
-  "Debian": firefox
+  "Debian": firefox-esr
 
 firefox_launcher:
   "distro_repo":
     "RedHat": "firefox.desktop"
-    "Debian": "firefox_firefox.desktop"
+    "Debian": "firefox-esr.desktop"
   "flathub":
     "RedHat": org.mozilla.firefox.desktop
     "Debian": org.mozilla.firefox.desktop
 
 firefox_command:
-  "distro_repo": "firefox"
-  "flathub": "flatpak run org.mozilla.firefox"
+  "distro_repo":
+    "RedHat": "firefox"
+    "Debian": "firefox-esr"
+  "flathub":
+    "RedHat": "flatpak run org.mozilla.firefox"
+    "Debian": "flatpak run org.mozilla.firefox"
 
 firefox_source: distro_repo
 firefox_extensions: true
@@ -32,7 +36,7 @@ firefox_config_path:
     "AlmaLinux": "{{ ansible_env.HOME }}/.mozilla/firefox"
     "Rocky": "{{ ansible_env.HOME }}/.mozilla/firefox"
     "CentOSStream": "{{ ansible_env.HOME }}/.mozilla/firefox"
-    "Ubuntu": "{{ ansible_env.HOME }}/snap/firefox/common/.mozilla/firefox"
+    "Ubuntu": "{{ ansible_env.HOME }}/.mozilla/firefox-esr"
     "Debian": "{{ ansible_env.HOME }}/.mozilla/firefox"
   "flathub":
     "AlmaLinux": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
@@ -58,7 +62,7 @@ user_config:
   "privacy.history.custom": true
   "places.history.enabled": false
   "browser.formfill.enable": false
-  "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"historyFormDataAndDownloads\",\"cookiesAndStorage\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
+  "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"offlineApps\",\"history\",\"formdata\",\"downloads\",\"sessions\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"  # "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"historyFormDataAndDownloads\",\"cookiesAndStorage\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
   "privacy.sanitize.sanitizeOnShutdown": true
   "signon.rememberSignons": false
   "privacy.clearOnShutdown.offlineApps": true
@@ -66,15 +70,15 @@ user_config:
   "extensions.activeThemeID": "{ad213ecb-ae95-4ac8-ac7a-5925ba36ea1d}"
 
 extensions:
-  - duckduckgo
-  - darkreader
-  - bitwarden-password-manager
-  - ublock-origin
-  - languagetool
-  - enhancer-for-youtube
-  - behind_the_overlay
-  - dictionary-anyvhere
-  - gnome-shell-integration
-  - matte-black-violet
+  "duckduckgo": "DuckDuckGo Privacy Essentials"
+  "darkreader": "Dark Reader"
+  "bitwarden-password-manager": "Bitwarden Password Manager"
+  "ublock-origin": "uBlock Origin"
+  "languagetool": "AI Grammar Checker & Paraphraser – LanguageTool"
+  "enhancer-for-youtube": "Enhancer for YouTube™"
+  "behind_the_overlay": "Behind The Overlay"
+  "dictionary-anyvhere": "Dictionary Anywhere"
+  "gnome-shell-integration": "GNOME Shell integration"
+  "matte-black-violet": "Matte Black (Violet)"
 
 ...

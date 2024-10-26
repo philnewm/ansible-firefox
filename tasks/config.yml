@@ -10,30 +10,53 @@
     owner: "{{ ansible_env.USER }}"
     group: "{{ ansible_effective_group_id }}"
     mode: "0644"
+  register: preferences
 
-- name: Create directory if it doesn't exist
-  become: true
-  ansible.builtin.file:
-    path: "/{{ policies_path }}"
-    state: directory
-    owner: root
-    group: root
-    mode: "0775"
-
-- name: Template policies.json to host - enables extensions
+- name: Setup policies
   when: firefox_extensions
-  become: true
-  ansible.builtin.template:
-    src: "policies.json.j2"
-    dest: "/{{ policies_path }}/policies.json"
-    owner: "{{ ansible_env.USER }}"
-    group: "{{ ansible_effective_group_id }}"
-    mode: "0644"
+  block:
+    - name: Create directory if it doesn't exist
+      become: true
+      ansible.builtin.file:
+        path: "/{{ policies_path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0775"
+
+    - name: Template policies.json to host - enables extensions
+      become: true
+      ansible.builtin.template:
+        src: "policies.json.j2"
+        dest: "/{{ policies_path }}/policies.json"
+        owner: "{{ ansible_env.USER }}"
+        group: "{{ ansible_effective_group_id }}"
+        mode: "0644"
+      register: policies
 
 - name: Apply Settings to default profile
+  when: preferences.changed or policies.changed
   ansible.builtin.command: 
-    cmd: "{{ firefox_command[firefox_source] }} -headless -P {{ profile_name }} --screenshot /dev/null"
-  register: result
-  changed_when: result.rc == 0
+    cmd: "{{ firefox_command[firefox_source][ansible_os_family] }} -headless -P {{ profile_name }}"
+  async: 1
+  poll: 1
+  ignore_errors: true
+
+# - name: JQ step byt step
+#   ansible.builtin.shell:
+#     cmd: |
+#      cat {{ profile_path }}/extensions.json
+#   args:
+#     executable: /bin/bash
+
+# - name: JQ step byt step
+#   ansible.builtin.shell:
+#     cmd: |
+#       jq '.addons |= map(
+#         if .defaultLocale.name | IN({{ extensions.values() | list | to_json }}) 
+#         then .active = true else . end)'
+#         {{ profile_path }}/extensions.json > {{ profile_path }}/extensions_tmp.json
+#   args:
+#     executable: /bin/bash
 
 ...

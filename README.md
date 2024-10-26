@@ -7,6 +7,10 @@ https://wiki.mozilla.org/Firefox/CommandLineOptions#Using_command_line_options
 https://linuxconfig.org/how-to-customize-firefox-using-the-policies-json-file
 https://gitlab.com/fedora/sigs/flatpak/fedora-flatpaks/-/issues/13
 
+```bash
+jq '.addons[] | select(.active == true) | .defaultLocale.name' ~/.mozilla/firefox/nlrguhh6.default_profile_by_ansible/extensions.json
+```
+
 [![ci-testing](https://github.com/philnewm/ansible-firefox/actions/workflows/molecule-ci.yml/badge.svg)](https://github.com/philnewm/ansible-firefox/actions/workflows/molecule-ci.yml)
 
 Role description

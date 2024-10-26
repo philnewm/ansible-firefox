@@ -63,31 +63,35 @@
           but got '{{ fetched_prefs[key] }}' instead for key '{{ key }}'."
         quiet: true
 
-    - name: Load extensions.json content
+    - name: Query firefox extensions
       ansible.builtin.slurp:
         src: "{{ profile_dir.files[0].path }}/extensions.json"
       register: extensions_file_content
 
+    # TODO install into venv
     - name: Install json filter dependency
-      become: true
-      ansible.builtin.package:
-        name: python3-jmespath
-        state: present
+      ansible.builtin.pip:
+        name: jmespath
+      delegate_to: localhost
 
     - name: Decode JSON and filter enabled extensions
       ansible.builtin.set_fact:
-        enabled_extensions: "{{ (extensions_file_content.content | b64decode | from_json) | json_query('addons[?active==`true`].name') }}"
-      when: extensions_file_content is defined
+        enabled_extensions: "{{ (extensions_file_content.content | b64decode | from_json) | json_query('addons[?active==`true`].defaultLocale.name') }}"
 
     - name: Display enabled Firefox extensions
       ansible.builtin.debug:
-        msg: "{{ enabled_extensions }}"
-      when: enabled_extensions is defined
+        var: enabled_extensions
 
-    - name: Install json filter dependency
-      become: true
-      ansible.builtin.package:
-        name: python3-jmespath
-        state: absent
+    - name: Test enabled extensions
+      loop: "{{ extensions.values() }}"
+      loop_control:
+        loop_var: extension_name
+        label: "{{ extension_name }}"
+      ansible.builtin.assert:
+        that:
+          - extension_name in enabled_extensions
+        fail_msg: |
+          "Extension '{{ extension_name }}' doesn't seem to be enabled."
+        quiet: true
 
 ...

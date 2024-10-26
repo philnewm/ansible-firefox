@@ -24,7 +24,7 @@
 
 - name: Get extensions
   when: firefox_extensions
-  loop: "{{ extensions }}"
+  loop: "{{ extensions.keys() }}"
   loop_control:
     loop_var: extension
   ansible.builtin.include_tasks:

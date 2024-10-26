@@ -15,13 +15,13 @@
   block:
     - name: Create firefox profile
       ansible.builtin.command: 
-        cmd: "{{ firefox_command[firefox_source] }} -headless -CreateProfile '{{ profile_name }}' --screenshot /dev/null"
+        cmd: "{{ firefox_command[firefox_source][ansible_os_family] }} -headless -CreateProfile '{{ profile_name }}' --screenshot /dev/null"
       register: result
       changed_when: result.rc == 0
 
     - name: Populate default profile
       ansible.builtin.command: 
-        cmd: "{{ firefox_command[firefox_source] }} -headless -P {{ profile_name }} --screenshot /dev/null"
+        cmd: "{{ firefox_command[firefox_source][ansible_os_family] }} -headless -P {{ profile_name }} --screenshot /dev/null"
       register: result
       changed_when: result.rc == 0
 
