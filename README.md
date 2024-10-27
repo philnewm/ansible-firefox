@@ -1,6 +1,6 @@
-# Role Name
+# Firefox
 
-Role isn't ready yet, furhter research is necessary:
+Role isn't ready yet, further research is necessary:
 
 * https://gist.github.com/aaronlippold/d1183270274568159d6a7b098441ec4c
 * https://braheezy.github.io/posts/automating-firefox-with-ansible/
@@ -82,8 +82,10 @@ tasks:
     ansible.builtin.include_role:
       name: ansible-firefox
     vars:
-      firefox_state: present
-
+      state: present
+      firefox_source: distro_repo
+      firefox_extensions: true
+      gnome_favorite: true
 ...
 ```
 
@@ -94,3 +96,25 @@ Add license - if any.
 ## Changes to role template
 
 * Add github action that flags empty directories on release creation
+
+## Git submodule molecule
+
+`git submodule add <url-of-shared-molecule-repo> molecule`
+
+`.git/info/attributes`
+
+```code
+molecule/default/cleanup.yml merge=ours
+molecule/default/converge.yml merge=ours
+molecule/default/verify.yml merge=ours
+```
+
+```bash
+git submodule update --remote --merge
+```
+
+```bash
+cd molecule
+git pull origin main
+```
+

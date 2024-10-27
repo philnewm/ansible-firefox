@@ -1,7 +1,7 @@
 galaxy_info:
-  role_name: ansible_role_template
-  author: author_name
-  description: ansible-role-template description
+  role_name: firefox
+  author: philnewm
+  description: Install and configure firefox automatically.
 
   license: some_license
 

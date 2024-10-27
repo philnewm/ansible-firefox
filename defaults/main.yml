@@ -3,6 +3,10 @@
 # Variables for ansible-firefox
 
 
+firefox_source: distro_repo
+firefox_extensions: true
+gnome_favorite: true
+
 firefox_package:
   "RedHat": firefox
   "Debian": firefox-esr
@@ -22,10 +26,6 @@ firefox_command:
   "flathub":
     "RedHat": "flatpak run org.mozilla.firefox"
     "Debian": "flatpak run org.mozilla.firefox"
-
-firefox_source: distro_repo
-firefox_extensions: true
-gnome_favorite: true
 
 profile_name: default_profile_by_ansible
 config_server_path: "/mnt/library/config/"
