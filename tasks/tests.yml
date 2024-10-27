@@ -1,0 +1,85 @@
+---
+
+- name: Test installed dependencies
+  loop: "{{ dependencies[ansible_os_family] }}"
+  ansible.builtin.assert:
+    that:
+      - item in ansible_facts.packages
+    fail_msg: "Dependency '{{ item }}' is not installed"
+    quiet: true
+
+- name: Test installed package
+  ansible.builtin.assert:
+    that:
+      - firefox_package[ansible_os_family] in ansible_facts.packages
+    fail_msg: "Package '{{ firefox_package[ansible_os_family] }}' is not installed"
+    quiet: true
+
+- name: Find profile directory
+  ansible.builtin.find:
+    paths: "{{ firefox_config_path[firefox_source][ansible_distribution] }}"
+    patterns: '*.{{ profile_name }}'
+    file_type: directory
+  register: profile_dir
+
+- name: Get firefox settings
+  loop: "{{ user_config.keys() }}"
+  loop_control:
+    loop_var: pref_key
+  ansible.builtin.command:
+    cmd: "grep '^user_pref(\"{{ pref_key }}\",' {{ profile_dir.files[0].path }}/prefs.js"
+  register: prefs_list
+  changed_when: false
+  failed_when: prefs_list.rc != 0
+
+- name: Create dictionary of fetched preferences
+  loop: "{{ prefs_list.results }}"
+  loop_control:
+    label: "{{ item.pref_key }}"
+  ansible.builtin.set_fact:
+    fetched_prefs: "{{ fetched_prefs | default({}) | combine({ item.pref_key: (item.stdout | regex_search(',\\s*(.+)\\);', '\\1') | first | from_json) }) }}"
+
+- name: Test firefox settings
+  loop: "{{ fetched_prefs.keys() }}"
+  loop_control:
+    loop_var: key
+  ansible.builtin.assert:
+    that:
+      - user_config[key] == fetched_prefs[key]
+    fail_msg: |
+      "Expected value '{{ user_config[key] }}'
+      but got '{{ fetched_prefs[key] }}' instead for key '{{ key }}'."
+    quiet: true
+
+- name: Query firefox extensions
+  ansible.builtin.slurp:
+    src: "{{ profile_dir.files[0].path }}/extensions.json"
+  register: extensions_file_content
+
+# TODO install into venv
+- name: Install json filter dependency
+  ansible.builtin.pip:
+    name: jmespath
+  delegate_to: localhost
+
+- name: Decode JSON and filter enabled extensions
+  ansible.builtin.set_fact:
+    enabled_extensions: "{{ (extensions_file_content.content | b64decode | from_json) | json_query('addons[?active==`true`].defaultLocale.name') }}"
+
+- name: Display enabled Firefox extensions
+  ansible.builtin.debug:
+    var: enabled_extensions
+
+- name: Test enabled extensions
+  loop: "{{ extensions.values() }}"
+  loop_control:
+    loop_var: extension_name
+    label: "{{ extension_name }}"
+  ansible.builtin.assert:
+    that:
+      - extension_name in enabled_extensions
+    fail_msg: |
+      "Extension '{{ extension_name }}' doesn't seem to be enabled."
+    quiet: true
+
+...
