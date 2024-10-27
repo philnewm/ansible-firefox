@@ -1,14 +1,11 @@
 {
-    "policies":{
-        "Extensions":{
-            "Install":[
-                {% for extension in extensions %}
-                "https://addons.mozilla.org/firefox/downloads/latest/{{ extension }}/latest.xpi"{% if not loop.last %},{% endif %}
+    "policies": {
+        "Extensions": {
+            "Install": [
+                {% for extension_key, extension_name in extensions.items() %}
+                "https://addons.mozilla.org/firefox/downloads/latest/{{ extension_key }}/latest.xpi"{% if not loop.last %},{% endif %}
                 {% endfor %}
             ]
         }
-    "ExtensionSettings": {
-      "*": {
-        "allowed_types": ["extension", "theme"]
     }
 }

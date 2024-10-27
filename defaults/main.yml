@@ -35,13 +35,13 @@ firefox_config_path:
   "distro_repo":
     "AlmaLinux": "{{ ansible_env.HOME }}/.mozilla/firefox"
     "Rocky": "{{ ansible_env.HOME }}/.mozilla/firefox"
-    "CentOSStream": "{{ ansible_env.HOME }}/.mozilla/firefox"
+    "CentOS": "{{ ansible_env.HOME }}/.mozilla/firefox"
     "Ubuntu": "{{ ansible_env.HOME }}/.mozilla/firefox-esr"
     "Debian": "{{ ansible_env.HOME }}/.mozilla/firefox"
   "flathub":
     "AlmaLinux": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
     "Rocky": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
-    "CentOSStream": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
+    "CentOS": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
     "Ubuntu": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
     "Debian": "{{ ansible_env.HOME }}/.var/app/org.mozilla.firefox/.mozilla/firefox"
 
@@ -62,15 +62,16 @@ user_config:
   "privacy.history.custom": true
   "places.history.enabled": false
   "browser.formfill.enable": false
-  "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"cookies\",\"offlineApps\",\"history\",\"formdata\",\"downloads\",\"sessions\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"  # "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"historyFormDataAndDownloads\",\"cookiesAndStorage\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
+  "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"historyFormDataAndDownloads\",\"cookiesAndStorage\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"  # "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"historyFormDataAndDownloads\",\"cookiesAndStorage\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
   "privacy.sanitize.sanitizeOnShutdown": true
   "signon.rememberSignons": false
   "privacy.clearOnShutdown.offlineApps": true
   "browser.backspace_action": 0
-  "extensions.activeThemeID": "{ad213ecb-ae95-4ac8-ac7a-5925ba36ea1d}"
+  # "extensions.activeThemeID": "{ad213ecb-ae95-4ac8-ac7a-5925ba36ea1d}"
 
+# Commented extensions for some reason just wont get enabled
 extensions:
-  "duckduckgo": "DuckDuckGo Privacy Essentials"
+  # "duckduckgo": "DuckDuckGo Privacy Essentials"
   "darkreader": "Dark Reader"
   "bitwarden-password-manager": "Bitwarden Password Manager"
   "ublock-origin": "uBlock Origin"
@@ -79,6 +80,6 @@ extensions:
   "behind_the_overlay": "Behind The Overlay"
   "dictionary-anyvhere": "Dictionary Anywhere"
   "gnome-shell-integration": "GNOME Shell integration"
-  "matte-black-violet": "Matte Black (Violet)"
+  # "matte-black-violet": "Matte Black (Violet)"
 
 ...

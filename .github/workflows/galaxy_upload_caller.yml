@@ -1,3 +1,5 @@
+---
+
 name: Ansible Galaxy Upload
 
 on:
@@ -12,3 +14,5 @@ jobs:
     with:
       repo_owner: ${{ github.repository_owner }}
       repo_name: ${{ github.event.repository.name }}
+
+...

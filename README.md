@@ -1,21 +1,23 @@
 # Role Name
 
-https://gist.github.com/aaronlippold/d1183270274568159d6a7b098441ec4c
-https://braheezy.github.io/posts/automating-firefox-with-ansible/
-https://askubuntu.com/questions/73474/how-to-install-firefox-addon-from-command-line-in-scripts
-https://wiki.mozilla.org/Firefox/CommandLineOptions#Using_command_line_options
-https://linuxconfig.org/how-to-customize-firefox-using-the-policies-json-file
-https://gitlab.com/fedora/sigs/flatpak/fedora-flatpaks/-/issues/13
+Role isn't ready yet, furhter research is necessary:
+
+* https://gist.github.com/aaronlippold/d1183270274568159d6a7b098441ec4c
+* https://braheezy.github.io/posts/automating-firefox-with-ansible/
+* https://askubuntu.com/questions/73474/how-to-install-firefox-addon-from-command-line-in-scripts
+* https://wiki.mozilla.org/Firefox/CommandLineOptions#Using_command_line_options
+* https://linuxconfig.org/how-to-customize-firefox-using-the-policies-json-file
+* https://gitlab.com/fedora/sigs/flatpak/fedora-flatpaks/-/issues/13
 
 ```bash
 jq '.addons[] | select(.active == true) | .defaultLocale.name' ~/.mozilla/firefox/nlrguhh6.default_profile_by_ansible/extensions.json
 ```
 
-[![ci-testing](https://github.com/philnewm/ansible-firefox/actions/workflows/molecule-ci.yml/badge.svg)](https://github.com/philnewm/ansible-firefox/actions/workflows/molecule-ci.yml)
+[![Alma9-CI](https://github.com/philnewm/ansible-firefox/actions/workflows/alma9-ci-caller-caller.yml/badge.svg)](https://github.com/philnewm/ansible-firefox/actions/workflows/alma9-ci-caller.yml)  [![Rocky9-CI](https://github.com/philnewm/ansible-firefox/actions/workflows/rocky9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-firefox/actions/workflows/rocky9-ci-caller.yml)  [![CentOSStream9-CI](https://github.com/philnewm/ansible-firefox/actions/workflows/centosstream9-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-firefox/actions/workflows/centosstream9-ci-caller.yml)  [![Debian12-CI](https://github.com/philnewm/ansible-firefox/actions/workflows/debian12-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-firefox/actions/workflows/debian12-ci-caller.yml)  [![Ubuntu2204-CI](https://github.com/philnewm/ansible-firefox/actions/workflows/ubuntu2204-ci-caller.yml/badge.svg)](https://github.com/philnewm/ansible-firefox/actions/workflows/ubuntu2204-ci-caller.yml)
 
 Role description
 
-This role includes a full vagrant based molecule testing setup at `extensions/molecule/default`
+This role includes a full vagrant based molecule testing setup at `molecule/default`
 
 ## Structure
 

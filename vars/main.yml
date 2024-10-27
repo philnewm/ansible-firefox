@@ -6,9 +6,7 @@
 dependencies:
   "RedHat": 
     - python3-psutil
-    - jq
   "Debian":
-    - jq
     - python3-debian
     - dirmngr
     - ca-certificates
