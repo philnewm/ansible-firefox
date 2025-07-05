@@ -1,9 +1,9 @@
 galaxy_info:
   role_name: firefox
   author: philnewm
-  description: Install and configure firefox automatically.
+  description: Install firefox automatically.
 
-  license: some_license
+  license: MIT
 
   min_ansible_version: "2.1"
 

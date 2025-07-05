@@ -1,8 +1,5 @@
 ---
 
-# tasks to install ansible-firefox
-
-
 - name: Install debian specific package_facts dependency
   become: true
   when: ansible_distribution == "Debian"
@@ -13,30 +10,13 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
+- name: Remove default snap install from Ubuntu
+  when: "'snapd' in ansible_facts.packages"
+  ansible.builtin.include_tasks:
+    file: purge_snap.yml
+
 - name: Install Firefox
-  when: firefox_package[ansible_os_family] not in ansible_facts.packages
   ansible.builtin.include_tasks:
     file: "{{ firefox_source }}.yml"
-
-- name: Setup firefox default profile
-  ansible.builtin.include_tasks:
-    file: profile.yml
-
-- name: Get extensions
-  when: firefox_extensions
-  loop: "{{ extensions.keys() }}"
-  loop_control:
-    loop_var: extension
-  ansible.builtin.include_tasks:
-    file: extensions.yml
-
-- name: Configure firefox
-  ansible.builtin.include_tasks:
-    file: config.yml
-
-- name: Add firefox to gnome favorites
-  when: gnome_favorite
-  ansible.builtin.include_tasks:
-    file: favorite.yml
 
 ...

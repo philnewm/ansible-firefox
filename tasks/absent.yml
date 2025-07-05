@@ -1,7 +1,17 @@
 ---
 
-# Tasks to remove ansible-firefox
+- name: Remove firefox package
+  become: true
+  when: firefox_source in ["default", "esr"]
+  ansible.builtin.package:
+    name: "{{ firefox_package[firefox_source][ansible_os_family] }}"
+    state: absent
 
+- name: Remove firefox flatpak
+  when: firefox_source == "flatpak"
+  community.general.flatpak:
+    name: org.mozilla.firefox
+    state: absent
 
 - name: Remove unused dependencies
   become: true

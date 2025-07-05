@@ -1,0 +1,14 @@
+---
+
+- name: Remove default snap install from Ubuntu
+  when: ansible_os_family == "Debian"
+  ansible.builtin.include_tasks:
+    file: setup_mozilla_repo_debian.yml
+
+- name: Install Firefox package
+  become: true
+  ansible.builtin.package:
+    name: firefox
+    state: present
+
+...

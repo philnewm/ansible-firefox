@@ -1,0 +1,25 @@
+---
+
+- name: Enable esr release on Ubuntu
+  when: ansible_distribution == "Ubuntu"
+  block:
+    - name: Ensure required packages for APT repositories are installed
+      become: true
+      ansible.builtin.apt:
+        name: software-properties-common
+        state: present
+        update_cache: true
+
+    - name: Add MozillaTeam PPA
+      become: true
+      ansible.builtin.apt_repository:
+        repo: ppa:mozillateam/ppa
+        state: present
+
+- name: Install firefox package
+  become: true
+  ansible.builtin.package:
+    name: "{{ firefox_package[firefox_source][ansible_os_family] }}"
+    state: present
+
+...

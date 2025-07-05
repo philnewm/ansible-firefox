@@ -1,11 +1,9 @@
 ---
 
-# Install firefox flatpak from flathub
-
-
-- name: Install flatpak for RedHat and Debian-based systems
+- name: Install flatpak
   become: true
   ansible.builtin.package:
+    update_cache: true
     name: flatpak
     state: present
 

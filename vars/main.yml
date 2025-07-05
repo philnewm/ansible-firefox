@@ -1,8 +1,5 @@
 ---
 
-# vars file for ansible-role-template
-
-
 dependencies:
   "RedHat": 
     - python3-psutil
