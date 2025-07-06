@@ -21,6 +21,7 @@ This role includes a full vagrant based molecule testing setup at `molecule`
  ┃ ┣ 📜absent.yml
  ┃ ┣ 📜default.yml
  ┃ ┣ 📜esr.yml
+ ┃ ┣ 📜extensions.yml
  ┃ ┣ 📜flatpak.yml
  ┃ ┣ 📜main.yml
  ┃ ┣ 📜present.yml

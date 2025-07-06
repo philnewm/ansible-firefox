@@ -29,7 +29,7 @@ extensions:
   - id: "ublock-origin"
     name: "uBlock Origin"
   - id: "languagetool"
-    name: "AI Grammar Checker & Paraphraser – LanguageTool"
+    name: "AI Grammar Checker & Paraphraser - LanguageTool"
   - id: "enhancer-for-youtube"
     name: "Enhancer for YouTube™"
   - id: "behind_the_overlay"
