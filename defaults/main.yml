@@ -10,4 +10,35 @@ firefox_package:
     "RedHat": firefox
     "Debian": firefox-esr
 
+# INFO flatpak doesn't support system-wide extensions
+firefox_system_ext_dir:
+  default:
+    RedHat: "/usr/lib64/firefox/browser/extensions"
+    Debian: "/usr/lib/firefox/distribution/extensions/"
+  esr:
+    RedHat: "/usr/lib64/firefox/browser/extensions"
+    Debian:  "/usr/lib/firefox-esr/browser/extensions"
+
+extensions:
+  - id: "duckduckgo"
+    name: "DuckDuckGo Privacy Essentials"
+  - id: "darkreader"
+    name: "Dark Reader"
+  - id: "bitwarden-password-manager"
+    name: "Bitwarden Password Manager"
+  - id: "ublock-origin"
+    name: "uBlock Origin"
+  - id: "languagetool"
+    name: "AI Grammar Checker & Paraphraser – LanguageTool"
+  - id: "enhancer-for-youtube"
+    name: "Enhancer for YouTube™"
+  - id: "behind_the_overlay"
+    name: "Behind The Overlay"
+  - id: "dictionary-anyvhere"
+    name: "Dictionary Anywhere"
+  - id: "gnome-shell-integration"
+    name: "GNOME Shell integration"
+  - id: "matte-black-violet"
+    name: "Matte Black (Violet)"
+
 ...

@@ -25,4 +25,42 @@
         fail_msg: "Firefox Flatpak is NOT installed."
         quiet: true
 
+- name: Get installed GNOME extensions
+  ansible.builtin.command:
+    cmd: "ls {{ firefox_system_ext_dir[firefox_source][ansible_os_family] }}"
+  register: extensions_list_result
+  changed_when: false
+
+- name: Initialize GUID list
+  ansible.builtin.set_fact:
+    installed_guids: []
+
+- name: "Call Firefox Addons API for theme info for {{ extension.name }}"
+  loop: "{{ extensions }}"
+  loop_control:
+    loop_var: extension
+    label: "{{ extension.name }}"
+  ansible.builtin.uri:
+    url: "https://addons.mozilla.org/api/v5/addons/addon/{{ extension.id }}"
+    return_content: true
+  register: extension_api_calls
+
+- name: Build list of GUIDs
+  loop: "{{ extension_api_calls.results }}"
+  loop_control:
+    label: "{{ item.json.guid }}"
+  ansible.builtin.set_fact:
+    installed_guids: "{{ installed_guids + [item.json.guid ~ '.xpi'] }}"
+
+- name: Show extensions slugs
+  ansible.builtin.debug:
+    var: installed_guids
+
+- name: Test system-wide extensions
+  loop: "{{ installed_guids }}"
+  ansible.builtin.assert:
+    that: item in extensions_list_result.stdout_lines
+    fail_msg: "Failed to find extension {{ item }}."
+    quiet: true
+
 ...

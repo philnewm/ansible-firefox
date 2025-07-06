@@ -19,4 +19,12 @@
   ansible.builtin.include_tasks:
     file: "{{ firefox_source }}.yml"
 
+- name: Include dependencies
+  loop: "{{ extensions }}"
+  loop_control:
+    loop_var: extension
+    label: "{{ extension.name }}"
+  ansible.builtin.include_tasks:
+    file: extensions.yml
+
 ...
