@@ -19,7 +19,7 @@ firefox_system_ext_dir:
     RedHat: "/usr/lib64/firefox/browser/extensions"
     Debian:  "/usr/lib/firefox-esr/browser/extensions"
 
-extensions:
+firefox_extensions:
   - id: "duckduckgo"
     name: "DuckDuckGo Privacy Essentials"
   - id: "darkreader"

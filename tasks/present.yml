@@ -20,7 +20,7 @@
     file: "{{ firefox_source }}.yml"
 
 - name: Install extensions system-wide
-  loop: "{{ extensions }}"
+  loop: "{{ firefox_extensions }}"
   loop_control:
     loop_var: extension
     label: "{{ extension.name }}"
