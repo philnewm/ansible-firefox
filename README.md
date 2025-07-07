@@ -68,9 +68,8 @@ tasks:
       name: ansible-firefox
     vars:
       state: present
-      firefox_source: distro_repo
-      firefox_extensions: true
-      gnome_favorite: true
+      firefox_source: default
+      firefox_extensions_enabled: true
 ...
 ```
 

@@ -36,7 +36,7 @@
     installed_guids: []
 
 - name: "Call Firefox Addons API for theme info for {{ extension.name }}"
-  loop: "{{ extensions }}"
+  loop: "{{ firefox_extensions }}"
   loop_control:
     loop_var: extension
     label: "{{ extension.name }}"

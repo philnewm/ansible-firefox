@@ -1,6 +1,7 @@
 ---
 
 firefox_source: default
+firefox_extensions_enabled: true
 
 firefox_package:
   default:
