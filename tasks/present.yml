@@ -1,5 +1,10 @@
 ---
 
+- name: Check for supported install source
+  when: firefox_source not in ["default", "esr", "flatpak"]
+  ansible.builtin.fail:
+    msg: "Please change {{ firefox_source }} to one of the supported ones: default, esr or flatpak"
+
 - name: Install debian specific package_facts dependency
   become: true
   when: ansible_distribution == "Debian"
@@ -20,7 +25,7 @@
     file: "{{ firefox_source }}.yml"
 
 - name: Install extensions system-wide
-  when: firefox_extensions_enabled
+  when: firefox_extensions_enabled and firefox_source != "flatpak"
   loop: "{{ firefox_extensions }}"
   loop_control:
     loop_var: extension
