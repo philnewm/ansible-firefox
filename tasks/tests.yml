@@ -25,6 +25,7 @@
         fail_msg: "Firefox Flatpak is NOT installed."
         quiet: true
 
+# Warning emplaeting of variables seems to happen even if logic is disabled
 - name: Verify extensions
   when: firefox_source != "flatpak"
   block:
