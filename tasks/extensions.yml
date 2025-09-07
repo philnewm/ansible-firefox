@@ -1,6 +1,6 @@
 ---
 
-- name: "Call Firefox Addons API for theme info for {{ extension.name }}"
+- name: "Call Firefox Addons API for {{ extension.name }}"
   ansible.builtin.uri:
     url: https://addons.mozilla.org/api/v5/addons/addon/{{ extension.id }}
     return_content: true
