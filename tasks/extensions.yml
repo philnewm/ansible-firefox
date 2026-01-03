@@ -17,7 +17,7 @@
 - name: Ensure extensions directory exists
   become: true
   ansible.builtin.file:
-    path: "{{ firefox_system_ext_dir[firefox_source][ansible_os_family] }}"
+    path: "{{ firefox_system_ext_dir[firefox_source][ansible_facts.os_family] }}"
     state: directory
     mode: "0755"
     owner: "root"
@@ -27,7 +27,7 @@
   become: true
   ansible.builtin.get_url:
     url: "{{ theme_download_link }}"
-    dest: "{{ firefox_system_ext_dir[firefox_source][ansible_os_family] }}/{{ ext_guid }}.xpi"
+    dest: "{{ firefox_system_ext_dir[firefox_source][ansible_facts.os_family] }}/{{ ext_guid }}.xpi"
     mode: "0644"
     owner: "root"
     group: "root"

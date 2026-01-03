@@ -31,9 +31,8 @@ firefox_extensions:
     name: "AdGuard AdBlocker"
   - id: "languagetool"
     name: "AI Grammar Checker & Paraphraser - LanguageTool"
-  # INFO disabled due to unavailability
-  # - id: "enhancer-for-youtube"
-  #   name: "Enhancer for YouTube™"
+  - id: "youtube-enhancer-vc"
+    name: "YouTube Enhancer"
   - id: "behind_the_overlay"
     name: "Behind The Overlay"
   - id: "dictionary-anyvhere"

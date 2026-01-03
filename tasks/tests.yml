@@ -4,8 +4,8 @@
   when: firefox_source in ["default", "esr"]
   ansible.builtin.assert:
     that:
-      - firefox_package[firefox_source][ansible_os_family] in ansible_facts.packages
-    fail_msg: "Package '{{ firefox_package[firefox_source][ansible_os_family] }}' is not installed"
+      - firefox_package[firefox_source][ansible_facts.os_family] in ansible_facts.packages
+    fail_msg: "Package '{{ firefox_package[firefox_source][ansible_facts.os_family] }}' is not installed"
     quiet: true
 
 - name: Test installed firefox flatpak
@@ -25,13 +25,13 @@
         fail_msg: "Firefox Flatpak is NOT installed."
         quiet: true
 
-# Warning emplaeting of variables seems to happen even if logic is disabled
+# Warning templating of variables seems to happen even if logic is disabled
 - name: Verify extensions
   when: firefox_source != "flatpak"
   block:
     - name: Get installed GNOME extensions
       ansible.builtin.command:
-        cmd: "ls {{ firefox_system_ext_dir[firefox_source][ansible_os_family] }}"
+        cmd: "ls {{ firefox_system_ext_dir[firefox_source][ansible_facts.os_family] }}"
       register: extensions_list_result
       changed_when: false
 
@@ -39,7 +39,7 @@
       ansible.builtin.set_fact:
         installed_guids: []
 
-    - name: "Call Firefox Addons API for theme info for {{ extension.name }}"
+    - name: Call Firefox Addons API for theme info for
       loop: "{{ firefox_extensions }}"
       loop_control:
         loop_var: extension

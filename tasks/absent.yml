@@ -1,10 +1,17 @@
 ---
 
+- name: Remove firefox language pack first on fedora
+  when: firefox_source in ["default", "esr"] and ansible_facts.distribution | lower == "fedora"
+  become: true
+  ansible.builtin.dnf:
+    name: firefox-langpacks
+    state: absent
+
 - name: Remove firefox package
   become: true
   when: firefox_source in ["default", "esr"]
   ansible.builtin.package:
-    name: "{{ firefox_package[firefox_source][ansible_os_family] }}"
+    name: "{{ firefox_package[firefox_source][ansible_facts.os_family] }}"
     state: absent
 
 - name: Remove firefox flatpak
@@ -12,10 +19,5 @@
   community.general.flatpak:
     name: org.mozilla.firefox
     state: absent
-
-- name: Remove unused dependencies
-  become: true
-  ansible.builtin.package:
-    autoremove: true
 
 ...
