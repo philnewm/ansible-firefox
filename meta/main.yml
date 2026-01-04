@@ -1,23 +1,25 @@
+---
+
 galaxy_info:
   role_name: firefox
   author: philnewm
   description: Install firefox automatically.
-
   license: MIT
-
   min_ansible_version: "2.1"
-
   platforms:
-  - name: EL
-    versions:
-      - "9"
-  - name: Debian
-    versions:
-      - "bookworm"
-  - name: Ubuntu
-    versions:
-      - "jammy"
-
+    - name: EL
+      versions:
+        - "9"
+    - name: Fedora
+      versions:
+        - "43"
+    - name: Debian
+      versions:
+        - "trixie"
+    - name: "Ubuntu"
+      versions:
+        - "noble"
   galaxy_tags: []
-
 dependencies: []
+
+...
