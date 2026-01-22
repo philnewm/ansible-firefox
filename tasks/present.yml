@@ -5,13 +5,6 @@
   ansible.builtin.fail:
     msg: "Please change {{ firefox_source }} to one of the supported ones: default, esr or flatpak"
 
-- name: Install debian specific package_facts dependency
-  become: true
-  when: ansible_facts.distribution == "Debian"
-  ansible.builtin.package:
-    name: python-apt-common
-    state: present
-
 - name: Gather package facts
   ansible.builtin.package_facts:
 
@@ -21,16 +14,63 @@
     file: purge_snap.yml
 
 - name: Install Firefox
+  when: firefox_source != "flatpak" and firefox_package[firefox_source][ansible_facts.os_family | lower] not in ansible_facts.packages
   ansible.builtin.include_tasks:
     file: "{{ firefox_source }}.yml"
 
-- name: Install extensions system-wide
-  when: firefox_extensions_enabled and firefox_source != "flatpak"
-  loop: "{{ firefox_extensions }}"
+- name: Ensure policies directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/firefox/policies
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# https://mozilla.github.io/policy-templates/
+- name: Install Firefox policies
+  become: true
+  ansible.builtin.template:
+    src: "policies.json.j2"
+    dest: "/etc/firefox/policies/policies.json"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Ensure default-prefs directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ firefox_default_config[ansible_facts.distribution | lower] | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Get Firefox major version
+  become: true
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      firefox --version | grep -oP '\d+' | head -1
+  args:
+    executable: /bin/bash
+  register: firefox_major_version
+  changed_when: false
+
+- name: Write default preferences
+  become: true
+  loop: "{{ firefox_user_config.get(firefox_major_version.stdout, firefox_user_config[firefox_user_config_fallback_version]) | dict2items }}"
   loop_control:
-    loop_var: extension
-    label: "{{ extension.name }}"
-  ansible.builtin.include_tasks:
-    file: extensions.yml
+    loop_var: pref_pair
+    label: "{{ pref_pair.key }}"
+  ansible.builtin.lineinfile:
+    path: "{{ firefox_default_config[ansible_facts.distribution | lower] }}"
+    # regexp: "^pref({{ pref_pair.key | to_json }},.*);$"
+    line: "pref({{ pref_pair.key | to_json }}, {{ pref_pair.value | to_json }});"
+    state: present
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
 
 ...

@@ -1,7 +1,7 @@
 ---
 
 - name: Remove default snap install from Ubuntu
-  when: ansible_facts.os_family == "Debian"
+  when: ansible_facts.os_family | lower == "debian"
   ansible.builtin.include_tasks:
     file: setup_mozilla_repo_debian.yml
 

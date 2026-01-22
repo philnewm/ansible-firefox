@@ -11,7 +11,7 @@
   become: true
   when: firefox_source in ["default", "esr"]
   ansible.builtin.package:
-    name: "{{ firefox_package[firefox_source][ansible_facts.os_family] }}"
+    name: "{{ firefox_package[firefox_source][ansible_facts.os_family | lower] }}"
     state: absent
 
 - name: Remove firefox flatpak

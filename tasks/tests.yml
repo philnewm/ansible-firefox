@@ -4,8 +4,8 @@
   when: firefox_source in ["default", "esr"]
   ansible.builtin.assert:
     that:
-      - firefox_package[firefox_source][ansible_facts.os_family] in ansible_facts.packages
-    fail_msg: "Package '{{ firefox_package[firefox_source][ansible_facts.os_family] }}' is not installed"
+      - firefox_package[firefox_source][ansible_facts.os_family | lower] in ansible_facts.packages
+    fail_msg: "Package '{{ firefox_package[firefox_source][ansible_facts.os_family | lower] }}' is not installed"
     quiet: true
 
 - name: Test installed firefox flatpak
@@ -18,53 +18,11 @@
       changed_when: false
       failed_when: false
 
-    - name: Assert Firefox Flatpak is installed
+    - name: Assert firefox flatpak is installed
       ansible.builtin.assert:
         that:
           - "'org.mozilla.firefox' in flatpak_apps.stdout_lines"
         fail_msg: "Firefox Flatpak is NOT installed."
-        quiet: true
-
-# Warning templating of variables seems to happen even if logic is disabled
-- name: Verify extensions
-  when: firefox_source != "flatpak"
-  block:
-    - name: Get installed GNOME extensions
-      ansible.builtin.command:
-        cmd: "ls {{ firefox_system_ext_dir[firefox_source][ansible_facts.os_family] }}"
-      register: extensions_list_result
-      changed_when: false
-
-    - name: Initialize GUID list
-      ansible.builtin.set_fact:
-        installed_guids: []
-
-    - name: Call Firefox Addons API for theme info for
-      loop: "{{ firefox_extensions }}"
-      loop_control:
-        loop_var: extension
-        label: "{{ extension.name }}"
-      ansible.builtin.uri:
-        url: "https://addons.mozilla.org/api/v5/addons/addon/{{ extension.id }}"
-        return_content: true
-      register: extension_api_calls
-
-    - name: Build list of GUIDs
-      loop: "{{ extension_api_calls.results }}"
-      loop_control:
-        label: "{{ item.json.guid }}"
-      ansible.builtin.set_fact:
-        installed_guids: "{{ installed_guids + [item.json.guid ~ '.xpi'] }}"
-
-    - name: Show extensions slugs
-      ansible.builtin.debug:
-        var: installed_guids
-
-    - name: Test system-wide extensions
-      loop: "{{ installed_guids }}"
-      ansible.builtin.assert:
-        that: item in extensions_list_result.stdout_lines
-        fail_msg: "Failed to find extension {{ item }}."
         quiet: true
 
 ...

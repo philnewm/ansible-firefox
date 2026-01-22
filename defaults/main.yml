@@ -5,41 +5,135 @@ firefox_extensions_enabled: true
 
 firefox_package:
   default:
-    "RedHat": firefox
-    "Debian": firefox
+    "redhat": firefox
+    "debian": firefox
   esr:
-    "RedHat": firefox
-    "Debian": firefox-esr
+    "redhat": firefox
+    "debian": firefox-esr
 
-# INFO flatpak doesn't support system-wide extensions
-firefox_system_ext_dir:
-  default:
-    RedHat: "/usr/lib64/firefox/browser/extensions"
-    Debian: "/usr/lib/firefox/distribution/extensions/"
-  esr:
-    RedHat: "/usr/lib64/firefox/browser/extensions"
-    Debian:  "/usr/lib/firefox-esr/browser/extensions"
-
+# Note flatpak doesn't support system-wide extensions
 firefox_extensions:
-  - id: "duckduckgo"
-    name: "DuckDuckGo Privacy Essentials"
-  - id: "darkreader"
-    name: "Dark Reader"
-  - id: "bitwarden-password-manager"
-    name: "Bitwarden Password Manager"
-  - id: "adguard-adblocker"
-    name: "AdGuard AdBlocker"
-  - id: "languagetool"
-    name: "AI Grammar Checker & Paraphraser - LanguageTool"
-  - id: "youtube-enhancer-vc"
-    name: "YouTube Enhancer"
-  - id: "behind_the_overlay"
-    name: "Behind The Overlay"
-  - id: "dictionary-anyvhere"
-    name: "Dictionary Anywhere"
-  - id: "gnome-shell-integration"
-    name: "GNOME Shell integration"
-  - id: "matte-black-violet"
-    name: "Matte Black (Violet)"
+  - name: "DuckDuckGo Privacy Essentials"
+    slug: "duckduckgo-for-firefox"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "jid1-ZAdIEUB7XOzOJw@jetpack"
+    url: 	"https://addons.mozilla.org/firefox/downloads/file/4613887/duckduckgo_for_firefox-2025.11.3.xpi"
+  - name: "Dark Reader"
+    slug: "darkreader"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "addon@darkreader.org"
+    url: "https://addons.mozilla.org/firefox/downloads/file/4665768/darkreader-4.9.119.xpi"
+  - name: "Bitwarden Password Manager"
+    slug: "bitwarden-password-manager"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "{446900e4-71c2-419f-a6a7-df9c091e268b}"
+    url: "https://addons.mozilla.org/firefox/downloads/file/4664623/bitwarden_password_manager-2025.12.1.xpi"
+  - name: "AdGuard AdBlocker"
+    slug: "adguard-adblocker"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "adguardadblocker@adguard.com"
+    url: "https://addons.mozilla.org/firefox/downloads/file/4644736/adguard_adblocker-5.2.700.1.xpi"
+  - name: "Private Grammar Checker - Harper"
+    slug: "private-grammar-checker-harper"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "harper@writewithharper.com"
+    url: "https://addons.mozilla.org/firefox/downloads/file/4660884/private_grammar_checker_harper-1.4.1.xpi"
+  - name: "Enhancer for YouTube™"
+    slug: "enhancer-for-youtube"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "enhancerforyoutube@maximerf.addons.mozilla.org"
+    url: "https://addons.mozilla.org/firefox/downloads/file/4393561/enhancer_for_youtube-2.0.130.1.xpi"
+  - name: "Behind The Overlay"
+    slug: "behind_the_overlay"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "jid1-Y3WfE7td45aWDw@jetpack"
+    url: "https://addons.mozilla.org/firefox/downloads/file/3923294/behind_the_overlay-0.2.1.xpi"
+  - name: "Dictionary Anywhere"
+    slug: "dictionary-anywhere"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "jid0-fbHwsGfb6kJyq2hj65KnbGte3yT@jetpack"
+    url: "https://addons.mozilla.org/firefox/downloads/file/4582592/dictionary_anywhere-0.6.3.xpi"
+  - name: "GNOME Shell integration"
+    slug: "gnome-shell-integration"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "chrome-gnome-shell@gnome.org"
+    url: "https://addons.mozilla.org/firefox/downloads/file/4591252/gnome_shell_integration-12.1.xpi"
+  - name: "Matte Black (Violet)"
+    slug: "matte-black-violet"
+    installation_mode: "normal_installed"
+    updates_disabled: false
+    private_browsing: true
+    guid: "{ad213ecb-ae95-4ac8-ac7a-5925ba36ea1d}"
+    url: "https://addons.mozilla.org/firefox/downloads/file/3914147/matte_black_violet-2022.2.23.xpi"
+
+
+firefox_default_config:
+  redhat: "/usr/lib64/firefox/browser/defaults/preferences/all-redhat.js"
+  almalinux: "/usr/lib64/firefox/browser/defaults/preferences/all-redhat.js"
+  centos: "/usr/lib64/firefox/browser/defaults/preferences/all-redhat.js"
+  rocky: "/usr/lib64/firefox/browser/defaults/preferences/all-redhat.js"
+  fedora: "/usr/lib64/firefox/browser/defaults/preferences/firefox-redhat-default-prefs.js"
+  debian: "/usr/lib/firefox/browser/defaults/preferences/firefox-debian-default-prefs.js"
+  ubuntu: "/usr/lib/firefox/browser/defaults/preferences/firefox-debian-default-prefs.js"
+
+firefox_user_config_fallback_version: "141"
+# Note flatpak changes some of these values
+firefox_user_config:
+  "config_default": &config_default
+    "general.autoScroll": true
+    "layout.css.prefers-color-scheme.content-override": 0
+    "browser.startup.homepage": "data:text/plain,browser.startup.homepage=https:duckduckgo.com/"
+    "browser.newtabpage.activity-stream.showSponsoredTopSites": false
+    "places.history.enabled": false
+    "browser.formfill.enable": false
+    "privacy.clearHistory.siteSettings": true
+    "privacy.clearOnShutdown.offlineApps": true
+    "privacy.clearOnShutdown_v2.siteSettings": true
+    "privacy.donottrackheader.enabled": true
+    "privacy.globalprivacycontrol.enabled": true
+    "privacy.globalprivacycontrol.was_ever_enabled": true
+    "privacy.history.custom": true
+    "privacy.sanitize.clearOnShutdown.hasMigratedToNewPrefs2": true
+    "privacy.sanitize.cpd.hasMigratedToNewPrefs2": true
+    "privacy.sanitize.sanitizeOnShutdown": true
+    "privacy.userContext.enabled": true
+    "signon.rememberSignons": false
+    "browser.backspace_action": 0
+  "128":
+    <<: *config_default
+    # "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"browsingHistoryAndDownloads\",\"formdata\",\"sessions\"],\"options\":{}}]"
+    # Warning setting seems to change inconsistently
+    # "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"siteSettings\",\"historyFormDataAndDownloads\",\"cookiesAndStorage\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
+  "140":
+    <<: *config_default
+  "141": &141
+    <<: *config_default
+    # Note auto theme enabling wont work with firefox-esr version due to conservative behavior in terms of customizations
+    "extensions.activeThemeID": "{ad213ecb-ae95-4ac8-ac7a-5925ba36ea1d}"
+    # "privacy.sanitize.pending": "[{\"id\":\"shutdown\",\"itemsToClear\":[\"cache\",\"siteSettings\",\"browsingHistoryAndDownloads\",\"cookiesAndStorage\"],\"options\":{}},{\"id\":\"newtab-container\",\"itemsToClear\":[],\"options\":{}}]"
+  "143":
+    <<: *141
+  "144":
+    <<: *141
+  "145":
+    <<: *141
 
 ...

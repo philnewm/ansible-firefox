@@ -1,0 +1,14 @@
+{
+  "policies": {
+    "ExtensionSettings": {
+      {% for extension in firefox_extensions %}
+        "{{ extension.guid }}": {
+          "installation_mode": "{{ extension.installation_mode }}",
+          "install_url": "{{ extension.url }}",
+          "updates_disabled": {{ extension.updates_disabled | tojson }},
+          "private_browsing": {{ extension.private_browsing | tojson }}
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    }
+  }
+}
