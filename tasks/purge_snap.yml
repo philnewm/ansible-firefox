@@ -36,15 +36,18 @@
     group: root
     mode: '0644'
 
-- name: "Remove leftover snap directories {{ item }}"
+- name: Remove leftover snap directories
   become: true
   loop:
     - /snap
     - /var/snap
     - /var/lib/snapd
     - /var/cache/snapd
+  loop_control:
+    loop_var: snap_dir
+    label: "{{ snap_dir }}"
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ snap_dir }}"
     state: absent
 
 ...

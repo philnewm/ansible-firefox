@@ -5,21 +5,21 @@
   ansible.builtin.file:
     path: /etc/apt/keyrings
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Download Mozilla gpg key
   become: true
   ansible.builtin.get_url:
     url: https://packages.mozilla.org/apt/repo-signing-key.gpg
     dest: /etc/apt/keyrings/packages.mozilla.org.asc
-    mode: '0644'
+    mode: "0644"
 
 - name: Ensure root's .gnupg directory exists
   become: true
   ansible.builtin.file:
     path: /root/.gnupg
     state: directory
-    mode: '0700'
+    mode: "0700"
     owner: root
     group: root
 
@@ -30,7 +30,8 @@
     line: 'deb [signed-by=/etc/apt/keyrings/packages.mozilla.org.asc] https://packages.mozilla.org/apt mozilla main'
     create: true
     state: present
-    mode: '0644'
+    mode: "0644"
+  register: mozilla_apt_repo_result
 
 - name: Set apt pinning preference for packages.mozilla.org
   become: true
@@ -40,12 +41,12 @@
       Package: *
       Pin: origin packages.mozilla.org
       Pin-Priority: 1000
-    mode: '0644'
+    mode: "0644"
 
 - name: Update package cache
   become: true
+  when: mozilla_apt_repo_result.changed  # noqa: no-handler
   ansible.builtin.apt:
     update_cache: true
-    cache_valid_time: 3600
 
 ...
