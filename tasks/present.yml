@@ -8,10 +8,14 @@
 - name: Gather package facts
   ansible.builtin.package_facts:
 
+# TODO move to own role
 - name: Remove default snap install from Ubuntu
   when: "'snapd' in ansible_facts.packages"
   ansible.builtin.include_tasks:
     file: purge_snap.yml
+
+- name: Gather package facts
+  ansible.builtin.package_facts:
 
 - name: Install Firefox
   when: firefox_source != "flatpak" and firefox_package[firefox_source][ansible_facts.os_family | lower] not in ansible_facts.packages
